@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>Composition Analysis — Safe Permissions, Dangerous Together | StartiQOS AI</title>
+<meta name="description" content="Reading customer data is safe. Calling a webhook is safe. Together they are exfiltration. We evaluate permission combinations, not individual grants.">
+<meta name="keywords" content="privilege escalation, capability composition, AI agent data exfiltration, permission combinations">
+<link rel="canonical" href="https://startiqosai.com/platform/composition-analysis.html">
+
+<meta property="og:type" content="website">
+<meta property="og:title" content="Composition Analysis — Safe Permissions, Dangerous Together | StartiQOS AI">
+<meta property="og:description" content="Reading customer data is safe. Calling a webhook is safe. Together they are exfiltration. We evaluate permission combinations, not individual grants.">
+<meta property="og:image" content="https://startiqosai.com/assets/img/og-cover.png">
+<meta name="twitter:card" content="summary_large_image">
+
+<link rel="icon" href="../favicon.ico">
+<link rel="manifest" href="../site.webmanifest">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="../css/reset.css">
+<link rel="stylesheet" href="../css/variables.css">
+<link rel="stylesheet" href="../css/typography.css">
+<link rel="stylesheet" href="../css/global.css">
+<link rel="stylesheet" href="../css/navbar.css">
+<link rel="stylesheet" href="../css/buttons.css">
+<link rel="stylesheet" href="../css/components.css">
+<link rel="stylesheet" href="../css/sections.css">
+<link rel="stylesheet" href="../css/footer.css">
+<link rel="stylesheet" href="../css/animations.css">
+<link rel="stylesheet" href="../css/pages/home.css">
+<link rel="stylesheet" href="../css/premium.css">
+
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<div class="grain" aria-hidden="true"></div>
+
+<nav class="nav" data-nav aria-label="Main navigation">
+  <a href="../index.html" class="nav__brand">StartiQOS <span>AI</span></a>
+  <ul class="nav__menu">
+    <li class="nav__item"><a href="../index.html" class="nav__link">Home</a></li>
+    <li class="nav__item" data-nav-item data-open="false">
+      <button class="nav__link" data-nav-trigger aria-expanded="false">About<svg class="nav__chev" viewBox="0 0 8 8" fill="none"><path d="M1 3l3 3 3-3" stroke="currentColor" stroke-width="1.2"/></svg></button>
+      <div class="nav__drop">
+        <a class="nav__drop-link" href="../about/index.html"><span><span class="nav__drop-title">About StartiQOS</span><span class="nav__drop-desc">What we are and why we exist</span></span></a>
+        <a class="nav__drop-link" href="../about/mission.html"><span><span class="nav__drop-title">Our Mission</span><span class="nav__drop-desc">Bounded AI, proven work</span></span></a>
+        <a class="nav__drop-link" href="../about/team.html"><span><span class="nav__drop-title">Core Team</span><span class="nav__drop-desc">The four who started it</span></span></a>
+        <a class="nav__drop-link" href="../about/how-we-work.html"><span><span class="nav__drop-title">How We Work</span><span class="nav__drop-desc">Our method and principles</span></span></a>
+        <a class="nav__drop-link" href="../about/what-we-dont-do.html"><span><span class="nav__drop-title">What We Don’t Do</span><span class="nav__drop-desc">Our stated limits</span></span></a>
+      </div>
+    </li>
+    <li class="nav__item" data-nav-item data-open="false">
+      <button class="nav__link" data-nav-trigger aria-expanded="false">Platform<svg class="nav__chev" viewBox="0 0 8 8" fill="none"><path d="M1 3l3 3 3-3" stroke="currentColor" stroke-width="1.2"/></svg></button>
+      <div class="nav__drop">
+        <a class="nav__drop-link" href="../platform/index.html"><span><span class="nav__drop-title">Control Plane Overview</span><span class="nav__drop-desc">How it sits in your stack</span></span></a>
+        <a class="nav__drop-link" href="../platform/least-privilege.html"><span><span class="nav__drop-title">Least-Privilege Enforcement</span><span class="nav__drop-desc">Ninety-four permissions to six</span></span></a>
+        <a class="nav__drop-link" href="../platform/composition-analysis.html"><span><span class="nav__drop-title">Composition Analysis</span><span class="nav__drop-desc">Safe alone, dangerous together</span></span></a>
+        <a class="nav__drop-link" href="../platform/delegation-control.html"><span><span class="nav__drop-title">Delegation Control</span><span class="nav__drop-desc">Authority narrows, never widens</span></span></a>
+        <a class="nav__drop-link" href="../platform/provenance.html"><span><span class="nav__drop-title">Provenance &amp; Taint</span><span class="nav__drop-desc">Untrusted data shrinks authority</span></span></a>
+        <a class="nav__drop-link" href="../platform/runtime-verification.html"><span><span class="nav__drop-title">Runtime Verification</span><span class="nav__drop-desc">Allow, escalate, or deny</span></span></a>
+      </div>
+    </li>
+    <li class="nav__item" data-nav-item data-open="false">
+      <button class="nav__link" data-nav-trigger aria-expanded="false">Services<svg class="nav__chev" viewBox="0 0 8 8" fill="none"><path d="M1 3l3 3 3-3" stroke="currentColor" stroke-width="1.2"/></svg></button>
+      <div class="nav__drop">
+        <a class="nav__drop-link" href="../services/index.html"><span><span class="nav__drop-title">All Services</span><span class="nav__drop-desc">Implementation, with stated limits</span></span></a>
+        <a class="nav__drop-link" href="../services/verified-knowledge-systems.html"><span><span class="nav__drop-title">Verified Knowledge Systems</span><span class="nav__drop-desc">Retrieval that cites its sources</span></span></a>
+        <a class="nav__drop-link" href="../services/department-transformation.html"><span><span class="nav__drop-title">Department Transformation</span><span class="nav__drop-desc">One department, stated ceiling</span></span></a>
+        <a class="nav__drop-link" href="../services/enterprise-transformation.html"><span><span class="nav__drop-title">Enterprise Transformation</span><span class="nav__drop-desc">Sequenced across departments</span></span></a>
+      </div>
+    </li>
+    <li class="nav__item" data-nav-item data-open="false">
+      <button class="nav__link" data-nav-trigger aria-expanded="false">Industries<svg class="nav__chev" viewBox="0 0 8 8" fill="none"><path d="M1 3l3 3 3-3" stroke="currentColor" stroke-width="1.2"/></svg></button>
+      <div class="nav__drop nav__drop--wide">
+        <a class="nav__drop-link" href="../industries/ai-native-companies.html"><span><span class="nav__drop-title">AI-Native Companies</span><span class="nav__drop-desc">Agents already in production</span></span></a>
+        <a class="nav__drop-link" href="../industries/enterprise-it.html"><span><span class="nav__drop-title">Enterprise IT</span><span class="nav__drop-desc">Many projects, no governance layer</span></span></a>
+        <a class="nav__drop-link" href="../industries/regulated-industries.html"><span><span class="nav__drop-title">Regulated Industries</span><span class="nav__drop-desc">Documented governance required</span></span></a>
+        <a class="nav__drop-link" href="../industries/healthcare.html"><span><span class="nav__drop-title">Healthcare</span><span class="nav__drop-desc">Patient data and agent access</span></span></a>
+        <a class="nav__drop-link" href="../industries/b2b-saas.html"><span><span class="nav__drop-title">B2B SaaS</span><span class="nav__drop-desc">Agents touching customer data</span></span></a>
+        <a class="nav__drop-link" href="../industries/marketplaces-d2c.html"><span><span class="nav__drop-title">Marketplaces &amp; D2C</span><span class="nav__drop-desc">Support and operations at volume</span></span></a>
+        <a class="nav__drop-link" href="../industries/agencies.html"><span><span class="nav__drop-title">Agencies</span><span class="nav__drop-desc">Delivering AI for clients</span></span></a>
+        <a class="nav__drop-link" href="../industries/startups.html"><span><span class="nav__drop-title">Startups</span><span class="nav__drop-desc">AI-native from day one</span></span></a>
+        <a class="nav__drop-link" href="../industries/smes.html"><span><span class="nav__drop-title">SMEs</span><span class="nav__drop-desc">First AI systems, done properly</span></span></a>
+      </div>
+    </li>
+    <li class="nav__item" data-nav-item data-open="false">
+      <button class="nav__link" data-nav-trigger aria-expanded="false">Resources<svg class="nav__chev" viewBox="0 0 8 8" fill="none"><path d="M1 3l3 3 3-3" stroke="currentColor" stroke-width="1.2"/></svg></button>
+      <div class="nav__drop">
+        <a class="nav__drop-link" href="../resources/blog/index.html"><span><span class="nav__drop-title">Blog</span><span class="nav__drop-desc">Research and engineering notes</span></span></a>
+        <a class="nav__drop-link" href="../resources/documentation/index.html"><span><span class="nav__drop-title">Documentation</span><span class="nav__drop-desc">Integration and reference</span></span></a>
+        <a class="nav__drop-link" href="../resources/case-studies/index.html"><span><span class="nav__drop-title">Case Studies</span><span class="nav__drop-desc">Published with client permission</span></span></a>
+        <a class="nav__drop-link" href="../resources/faq.html"><span><span class="nav__drop-title">FAQ</span><span class="nav__drop-desc">Common questions, answered plainly</span></span></a>
+      </div>
+    </li>
+    <li class="nav__item"><a href="../careers.html" class="nav__link">Careers</a></li>
+    <li class="nav__item"><a href="../contact.html" class="nav__link">Contact</a></li>
+  </ul>
+  <div class="nav__actions">
+    <a href="../login.html" class="btn btn--ghost btn--sm">Log in</a>
+    <a href="../console.html" class="btn btn--gold btn--sm">Open Control Plane</a>
+    <button class="nav__toggle" data-nav-toggle aria-label="Menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<main id="main">
+
+<section class="section">
+  <div class="wrap">
+
+    <div class="sec-head">
+      <p class="eyebrow rv">Layer 02</p>
+      <h1 class="rv">Safe alone. <em class="accent">Dangerous together.</em></h1>
+      <p class="lead rv">Every identity system evaluates permissions one at a time. The exfiltration path only exists in the combination. Reading customer records is routine. Calling an external webhook is routine. Neither is flagged. Together they are a data-theft channel that nothing in your stack will report.</p>
+    </div>
+  </div>
+</section>
+
+<section class="section section--alt">
+  <div class="wrap">
+    <div class="codeblock rv">
+      <p class="codeblock__label">What a single-permission review sees</p>
+      <pre class="codeblock__pre">  crm.contacts.read        ✓ approved  — support agents need this
+  http.post.external       ✓ approved  — webhook integrations need this
+
+  Both individually justified. Both individually low risk.
+  Neither flagged by IAM, CIEM, or agent identity tooling.</pre>
+    </div>
+
+    <div class="codeblock rv">
+      <p class="codeblock__label">What composition analysis sees</p>
+      <pre class="codeblock__pre">  REACHABILITY PATH DETECTED
+
+  crm.contacts.read  →  http.post.external
+
+  Classification:  data movement to an uncontrolled destination
+  Reachable in:    one agent turn, no additional capability required
+  Trigger:         any instruction reaching the agent's context
+
+  Verdict:  the pair is denied. Either capability alone is allowed.</pre>
+    </div>
+
+    <div class="note rv"><strong>This is the claim we lead with,</strong> because it is the one nothing else in the market makes. Identity platforms tell you an agent is over-permissioned. None of them tell you which two of its permissions form a path.</div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+
+    <div class="sec-head">
+      <p class="eyebrow rv">The Classes</p>
+      <h2 class="rv">Four kinds of <em class="accent">reachable path.</em></h2>
+      <p class="lead rv">Composition risk is not a single pattern. These are the four that matter, and each is evaluated separately.</p>
+    </div>
+
+    <div class="rows">
+      <div class="row rv">
+        <p class="row__num">01</p>
+        <h3 class="row__title">Read → Egress</h3>
+        <p class="row__body">Any capability that returns sensitive data, paired with any capability that moves bytes outside the boundary. Email, webhook, file write to a shared mount, even a verbose log write to a third-party sink.</p>
+      </div>
+      <div class="row rv">
+        <p class="row__num">02</p>
+        <h3 class="row__title">Read → Write-Back</h3>
+        <p class="row__body">Read a credential, a token or a configuration value, then write it somewhere it becomes reachable — a ticket comment, a shared document, an environment variable another agent can read.</p>
+      </div>
+      <div class="row rv">
+        <p class="row__num">03</p>
+        <h3 class="row__title">Enumerate → Act</h3>
+        <p class="row__body">List every record, then perform a per-record action. Individually a lookup and an update. Combined, the ability to modify an entire table one row at a time without ever tripping a bulk-operation control.</p>
+      </div>
+      <div class="row rv">
+        <p class="row__num">04</p>
+        <h3 class="row__title">Delegate → Re-Amplify</h3>
+        <p class="row__body">Hand a narrow capability to a sub-agent that holds a different narrow capability. Neither agent can complete the path alone. The chain can. This is why composition is evaluated across the delegation graph, not per agent.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section section--alt">
+  <div class="wrap">
+
+    <div class="sec-head">
+      <p class="eyebrow rv">How It Runs</p>
+      <h2 class="rv">Analysed offline. <em class="accent">Enforced inline.</em></h2>
+      <p class="lead rv">The expensive part happens during policy generation. The runtime check is a set lookup.</p>
+    </div>
+
+    <div class="grid-3--open rv-stagger">
+      <article class="cause">
+        <p class="cause__label">At learn time</p>
+        <h3 class="cause__title">Graph Construction</h3>
+        <p class="cause__body">Every capability in the profile is classified by what it can read, write, enumerate or send. The reachability graph is built once, and the dangerous pairs are enumerated.</p>
+        <p class="cause__answer"><strong>Offline.</strong> Nothing in the hot path.</p>
+      </article>
+      <article class="cause">
+        <p class="cause__label">At approval</p>
+        <h3 class="cause__title">Human Review</h3>
+        <p class="cause__body">The detected paths are presented with their classification and an example of what an attacker would need to do. The reviewer decides which to block and which are genuinely required.</p>
+        <p class="cause__answer"><strong>Required paths get a narrower form</strong> — an allowlisted destination rather than open egress.</p>
+      </article>
+      <article class="cause">
+        <p class="cause__label">At runtime</p>
+        <h3 class="cause__title">Session-State Check</h3>
+        <p class="cause__body">The capability set an agent has actually exercised in this session is tracked. If invoking the next capability would complete a blocked path, the call is denied — even though that capability is in the profile.</p>
+        <p class="cause__answer"><strong>Order matters.</strong> The check is on the path, not the permission.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+
+<section class="section--alt cta">
+  <div class="wrap">
+    <h2 class="cta__title rv">Find the paths<br><em class="accent">nobody is looking for.</em></h2>
+    <p class="cta__sub rv">The shadow-mode report includes every composition path present in your current agent configuration, classified and ranked.</p>
+    <div class="cta__actions rv">
+      <a class="btn btn--primary" href="../contact.html">Book a shadow-mode pilot <span class="btn__arrow">&rarr;</span></a>
+      <a class="btn btn--ghost" href="delegation-control.html">Delegation control</a>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="footer__top">
+      <div>
+        <p class="footer__brand">StartiQOS <span>AI</span></p>
+        <p class="footer__blurb">Software that bounds what AI can do. Engineering that proves what it did.</p>
+        <p class="footer__loc">Chandigarh, India · Working globally</p>
+        <div class="footer__social">
+          <a href="#" aria-label="LinkedIn">in</a>
+          <a href="#" aria-label="X">X</a>
+          <a href="#" aria-label="GitHub">◎</a>
+        </div>
+      </div>
+      <div>
+        <p class="footer__col-title">Platform</p>
+        <a class="footer__link" href="../platform/index.html">Control Plane Overview</a>
+        <a class="footer__link" href="../platform/least-privilege.html">Least-Privilege Enforcement</a>
+        <a class="footer__link" href="../platform/composition-analysis.html">Composition Analysis</a>
+        <a class="footer__link" href="../platform/delegation-control.html">Delegation Control</a>
+        <a class="footer__link" href="../platform/provenance.html">Provenance &amp; Taint</a>
+        <a class="footer__link" href="../platform/runtime-verification.html">Runtime Verification</a>
+      </div>
+      <div>
+        <p class="footer__col-title">Services</p>
+        <a class="footer__link" href="../services/verified-knowledge-systems.html">Verified Knowledge Systems</a>
+        <a class="footer__link" href="../services/department-transformation.html">Department Transformation</a>
+        <a class="footer__link" href="../services/enterprise-transformation.html">Enterprise Transformation</a>
+        <a class="footer__link" href="../services/index.html">All Services</a>
+      </div>
+      <div>
+        <p class="footer__col-title">Industries</p>
+        <a class="footer__link" href="../industries/ai-native-companies.html">AI-Native Companies</a>
+        <a class="footer__link" href="../industries/enterprise-it.html">Enterprise IT</a>
+        <a class="footer__link" href="../industries/regulated-industries.html">Regulated Industries</a>
+        <a class="footer__link" href="../industries/healthcare.html">Healthcare</a>
+        <a class="footer__link" href="../industries/b2b-saas.html">B2B SaaS</a>
+      </div>
+      <div>
+        <p class="footer__col-title">Company</p>
+        <a class="footer__link" href="../about/index.html">About</a>
+        <a class="footer__link" href="../about/mission.html">Mission</a>
+        <a class="footer__link" href="../about/team.html">Core Team</a>
+        <a class="footer__link" href="../about/how-we-work.html">How We Work</a>
+        <a class="footer__link" href="../about/what-we-dont-do.html">What We Don’t Do</a>
+        <a class="footer__link" href="../careers.html">Careers</a>
+      </div>
+      <div>
+        <p class="footer__col-title">Resources</p>
+        <a class="footer__link" href="../resources/blog/index.html">Blog</a>
+        <a class="footer__link" href="../resources/documentation/index.html">Documentation</a>
+        <a class="footer__link" href="../resources/case-studies/index.html">Case Studies</a>
+        <a class="footer__link" href="../resources/faq.html">FAQ</a>
+        <a class="footer__link" href="../contact.html">Contact</a>
+      </div>
+    </div>
+    <div class="footer__bottom">
+      <span>© 2026 StartiQOS AI — All rights reserved.</span>
+      <span class="footer__legal">
+        <a href="../legal/privacy.html">Privacy</a>
+        <a href="../legal/terms.html">Terms</a>
+        <a href="../legal/security.html">Security</a>
+      </span>
+    </div>
+  </div>
+</footer>
+
+<script type="module" src="../js/main.js"></script>
+</body>
+</html>

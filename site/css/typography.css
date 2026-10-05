@@ -1,0 +1,37 @@
+/* ==========================================================================
+   Typography
+   ========================================================================== */
+body{font-family:var(--font-body);font-size:var(--fs-body);line-height:var(--lh-body);
+  color:var(--ink-2);font-weight:400}
+
+h1,h2,h3,h4{font-family:var(--font-display);font-weight:400;color:var(--ink);
+  letter-spacing:var(--ls-tight)}
+h1{font-size:var(--fs-h1);line-height:var(--lh-tight)}
+h2{font-size:var(--fs-h2);line-height:var(--lh-snug)}
+h3{font-size:var(--fs-h3);line-height:var(--lh-snug)}
+h4{font-size:var(--fs-h4);line-height:1.35}
+
+/* Signature device: italic gold phrase inside a serif headline */
+.accent{font-style:italic;color:var(--gold)}
+
+.display{font-family:var(--font-display);font-size:var(--fs-display);
+  line-height:var(--lh-tight);letter-spacing:var(--ls-tight);color:var(--ink);font-weight:400}
+
+.lead{font-size:var(--fs-lead);line-height:1.7;color:var(--ink-2);font-weight:300;
+  max-width:var(--max-text)}
+
+.label{font-family:var(--font-body);font-size:var(--fs-label);font-weight:600;
+  letter-spacing:var(--ls-label);text-transform:uppercase;color:var(--gold)}
+
+.eyebrow{display:flex;align-items:center;gap:11px;font-size:var(--fs-label);
+  font-weight:600;letter-spacing:var(--ls-label);text-transform:uppercase;color:var(--gold)}
+.eyebrow::before{content:'';width:26px;height:1px;background:var(--gold);flex-shrink:0}
+
+.mono{font-family:var(--font-mono);font-size:var(--fs-xs);
+  letter-spacing:var(--ls-mono);text-transform:uppercase}
+
+.small{font-size:var(--fs-sm);color:var(--muted)}
+.caption{font-family:var(--font-mono);font-size:10px;letter-spacing:.15em;
+  text-transform:uppercase;color:var(--muted)}
+
+strong,b{font-weight:600;color:var(--ink)}

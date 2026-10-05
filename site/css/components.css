@@ -1,0 +1,79 @@
+/* ==========================================================================
+   Components — cards, badges, tables, accordions
+   ========================================================================== */
+
+/* ---- Status badge — mandatory on every product surface ------------------ */
+.badge{display:inline-flex;align-items:center;gap:6px;
+  font-family:var(--font-mono);font-size:9.5px;letter-spacing:.14em;
+  text-transform:uppercase;padding:5px 10px;border:1px solid}
+.badge--live{color:var(--live);border-color:rgba(46,125,79,.3);background:var(--live-bg)}
+.badge--dev{color:var(--dev);border-color:var(--line);background:var(--dev-bg)}
+.badge--gold{color:var(--gold);border-color:var(--line-gold);background:var(--gold-wash)}
+.badge__dot{width:5px;height:5px;border-radius:50%;background:currentColor}
+
+/* ---- Card -------------------------------------------------------------- */
+.card{background:var(--cream);padding:clamp(24px,3vw,36px);
+  transition:background var(--t-base) var(--e),transform var(--t-base) var(--e)}
+.card:hover{background:var(--white);transform:translateY(-2px)}
+.card__num{font-family:var(--font-mono);font-size:var(--fs-xs);
+  letter-spacing:var(--ls-mono);color:var(--gold);margin-bottom:var(--s-5)}
+.card__title{font-family:var(--font-display);font-size:var(--fs-h4);
+  color:var(--ink);margin-bottom:var(--s-3)}
+.card__body{font-size:var(--fs-sm);line-height:1.72;color:var(--muted)}
+
+/* ---- Editorial index row (human team, feature lists) ------------------- */
+.row{display:grid;grid-template-columns:64px 1fr 1.2fr;gap:clamp(16px,3vw,44px);
+  padding-block:clamp(22px,3.4vh,34px);border-top:1px solid var(--line);align-items:start}
+.row:last-child{border-bottom:1px solid var(--line)}
+.row__num{font-family:var(--font-mono);font-size:var(--fs-xs);color:var(--muted-2);
+  letter-spacing:.1em;padding-top:6px}
+.row__title{font-family:var(--font-display);font-size:var(--fs-h4);color:var(--ink)}
+.row__body{font-size:var(--fs-sm);line-height:1.72;color:var(--muted)}
+@media(max-width:900px){
+  .row{grid-template-columns:44px 1fr;gap:14px}
+  .row__body{grid-column:2/-1}
+}
+
+/* ---- Problem-solved tag ------------------------------------------------ */
+.solved{margin-top:var(--s-4);padding-top:var(--s-3);border-top:1px solid var(--line)}
+.solved__label{font-family:var(--font-mono);font-size:9.5px;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--gold);display:block;margin-bottom:6px}
+.solved__text{font-size:var(--fs-sm);line-height:1.7;color:var(--muted)}
+
+/* ---- Data table -------------------------------------------------------- */
+.table{width:100%;border-top:1px solid var(--line)}
+.table th{text-align:left;font-family:var(--font-mono);font-size:10px;
+  letter-spacing:.14em;text-transform:uppercase;color:var(--muted);
+  padding:14px 16px;border-bottom:1px solid var(--line);font-weight:500}
+.table td{padding:16px;border-bottom:1px solid var(--line);font-size:var(--fs-sm);
+  color:var(--ink-2);vertical-align:top}
+.table td:first-child{color:var(--ink);font-weight:500}
+.table tr:hover td{background:var(--cream-2)}
+
+/* ---- Stat -------------------------------------------------------------- */
+.stat{padding:clamp(24px,3vw,34px);background:var(--cream)}
+.stat__num{font-family:var(--font-display);font-size:clamp(32px,4vw,52px);
+  line-height:1;color:var(--ink);font-variant-numeric:tabular-nums}
+.stat__label{font-family:var(--font-mono);font-size:10px;letter-spacing:.13em;
+  text-transform:uppercase;color:var(--muted);margin-top:14px;line-height:1.6}
+
+/* ---- Accordion --------------------------------------------------------- */
+.acc__item{border-bottom:1px solid var(--line)}
+.acc__trigger{width:100%;display:flex;justify-content:space-between;align-items:center;
+  gap:20px;padding:22px 0;text-align:left;font-family:var(--font-display);
+  font-size:var(--fs-h4);color:var(--ink);transition:color var(--t-fast) var(--e)}
+.acc__trigger:hover{color:var(--gold)}
+.acc__icon{flex-shrink:0;width:14px;height:14px;position:relative}
+.acc__icon::before,.acc__icon::after{content:'';position:absolute;background:var(--gold);
+  transition:transform var(--t-base) var(--e)}
+.acc__icon::before{left:0;top:6px;width:14px;height:1px}
+.acc__icon::after{left:6px;top:0;width:1px;height:14px}
+.acc__item[data-open="true"] .acc__icon::after{transform:scaleY(0)}
+.acc__panel{max-height:0;overflow:hidden;transition:max-height var(--t-base) var(--e)}
+.acc__body{padding-bottom:24px;font-size:var(--fs-sm);line-height:1.8;
+  color:var(--muted);max-width:var(--max-text)}
+
+/* ---- Quote / statement band -------------------------------------------- */
+.statement{text-align:center;padding-block:clamp(72px,12vh,140px)}
+.statement__text{font-family:var(--font-display);font-size:clamp(24px,3.4vw,46px);
+  line-height:1.28;color:var(--ink);max-width:900px;margin-inline:auto}

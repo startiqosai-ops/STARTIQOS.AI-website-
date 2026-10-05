@@ -1,0 +1,47 @@
+/* ==========================================================================
+   Animation system
+   Rule: nothing under 600ms. No bounce. No spring. Long-tail easing only.
+   ========================================================================== */
+
+/* ---- Scroll reveal ----------------------------------------------------- */
+.rv{opacity:0;transform:translateY(22px);
+  transition:opacity var(--t-slow) var(--e),transform var(--t-slow) var(--e)}
+.rv.is-visible{opacity:1;transform:none}
+
+.rv-stagger > *{opacity:0;transform:translateY(20px);
+  transition:opacity var(--t-slow) var(--e),transform var(--t-slow) var(--e)}
+.rv-stagger.is-visible > *{opacity:1;transform:none}
+.rv-stagger.is-visible > *:nth-child(1){transition-delay:0ms}
+.rv-stagger.is-visible > *:nth-child(2){transition-delay:70ms}
+.rv-stagger.is-visible > *:nth-child(3){transition-delay:135ms}
+.rv-stagger.is-visible > *:nth-child(4){transition-delay:195ms}
+.rv-stagger.is-visible > *:nth-child(5){transition-delay:250ms}
+.rv-stagger.is-visible > *:nth-child(6){transition-delay:300ms}
+
+/* ---- Line-mask headline reveal ----------------------------------------- */
+.mask{overflow:hidden;display:block;padding-bottom:.06em}
+.mask > span{display:block;transform:translateY(110%);opacity:0;
+  transition:transform 1.15s var(--e),opacity 1.15s var(--e)}
+.mask.is-visible > span{transform:none;opacity:1}
+
+/* ---- Rule draw --------------------------------------------------------- */
+.rule--draw{transform:scaleX(0);transform-origin:left;
+  transition:transform var(--t-slow) var(--e)}
+.rule--draw.is-visible{transform:scaleX(1)}
+
+/* ---- Keyframes --------------------------------------------------------- */
+@keyframes grain-shift{
+  0%{transform:translate(0,0)} 25%{transform:translate(-2%,1%)}
+  50%{transform:translate(1%,-2%)} 75%{transform:translate(-1%,-1%)}
+  100%{transform:translate(0,0)}
+}
+@keyframes pulse-dot{0%,100%{opacity:1}50%{opacity:.4}}
+@keyframes sweep{0%{transform:translateX(-100%)}55%,100%{transform:translateX(100%)}}
+
+.dot-live{animation:pulse-dot 2.6s ease-in-out infinite}
+
+@media(prefers-reduced-motion:reduce){
+  .rv,.rv-stagger > *,.mask > span{opacity:1!important;transform:none!important}
+  .rule--draw{transform:scaleX(1)!important}
+  .grain{animation:none}
+}

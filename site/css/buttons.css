@@ -1,0 +1,28 @@
+/* ==========================================================================
+   Buttons & CTAs
+   ========================================================================== */
+.btn{display:inline-flex;align-items:center;gap:12px;
+  font-family:var(--font-body);font-size:var(--fs-label);font-weight:600;
+  letter-spacing:.1em;text-transform:uppercase;
+  padding:16px 28px;transition:all var(--t-base) var(--e);cursor:pointer;
+  border:1px solid transparent}
+
+.btn__arrow{transition:transform var(--t-base) var(--e);display:inline-block}
+.btn:hover .btn__arrow{transform:translateX(5px)}
+
+.btn--primary{background:var(--ink);color:var(--cream)}
+.btn--primary:hover{background:var(--gold);transform:translateY(-2px)}
+
+.btn--gold{background:var(--gold);color:var(--white)}
+.btn--gold:hover{background:var(--gold-deep);transform:translateY(-2px)}
+
+.btn--ghost{border-color:var(--line);color:var(--ink)}
+.btn--ghost:hover{border-color:var(--gold);transform:translateY(-2px)}
+
+.btn--sm{padding:11px 20px;font-size:10.5px}
+.btn--block{width:100%;justify-content:center}
+
+.link{display:inline-flex;align-items:center;gap:8px;
+  font-family:var(--font-mono);font-size:var(--fs-xs);letter-spacing:var(--ls-mono);
+  text-transform:uppercase;color:var(--ink);transition:gap var(--t-base) var(--e),color var(--t-fast) var(--e)}
+.link:hover{gap:15px;color:var(--gold)}

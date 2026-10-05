@@ -1,0 +1,967 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>StartiQOS AI — AI Agent Security &amp; Least-Privilege Enforcement</title>
+<meta name="description" content="StartiQOS AI is an authority control plane for AI agents. Enforce least privilege at every call, block prompt injection by removing capability, and implement enterprise RAG and AI-native transformation with published autonomy ceilings.">
+<meta name="keywords" content="AI agent security, AI agent permissions, least privilege AI agents, prompt injection protection, MCP security, agent authorization, AI governance, enterprise RAG, AI-native transformation">
+<link rel="canonical" href="https://startiqosai.com/">
+
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://startiqosai.com/">
+<meta property="og:title" content="StartiQOS AI — Every Permission Earned. Every Action Proven.">
+<meta property="og:description" content="Authority control plane for AI agents. We remove what an attack needs instead of detecting the attack.">
+<meta property="og:image" content="https://startiqosai.com/assets/img/og-cover.png">
+<meta name="twitter:card" content="summary_large_image">
+
+<link rel="icon" href="favicon.ico">
+<link rel="manifest" href="site.webmanifest">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="css/reset.css">
+<link rel="stylesheet" href="css/variables.css">
+<link rel="stylesheet" href="css/typography.css">
+<link rel="stylesheet" href="css/global.css">
+<link rel="stylesheet" href="css/navbar.css">
+<link rel="stylesheet" href="css/buttons.css">
+<link rel="stylesheet" href="css/components.css">
+<link rel="stylesheet" href="css/sections.css">
+<link rel="stylesheet" href="css/footer.css">
+<link rel="stylesheet" href="css/animations.css">
+<link rel="stylesheet" href="css/pages/home.css">
+<link rel="stylesheet" href="css/premium.css">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "StartiQOS AI",
+  "url": "https://startiqosai.com",
+  "description": "Authority control plane for AI agents. Least-privilege enforcement, composition analysis, and enterprise AI implementation.",
+  "address": { "@type": "PostalAddress", "addressLocality": "Chandigarh", "addressCountry": "IN" },
+  "email": "info@startiqosai.com"
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is agent authority enforcement?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Agent authority enforcement limits what an AI agent can do by granting only the permissions its task requires, verified at runtime. Unlike detection-based security, which identifies and blocks malicious instructions, enforcement removes the capability entirely, so an injected instruction has nothing to invoke."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How is this different from prompt injection detection?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Detection works by recognising an attack pattern, which fails against attacks it has not seen. Capability removal does not depend on recognition. If a permission was never granted, no instruction can invoke it, regardless of how the instruction is phrased."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is composition-based privilege escalation?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Two permissions can each be safe individually and dangerous together. Reading customer records is routine. Calling an external webhook is routine. Combined, they form an exfiltration path. Identity and access management systems evaluate permissions individually and do not flag the combination."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is an autonomy ceiling?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "An autonomy ceiling is the honest upper limit on how much of a department's work can be automated, stated before an engagement begins. It describes the share of work hours automated, not decision authority. Decisions remain with named humans."
+      }
+    }
+  ]
+}
+</script>
+</head>
+
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<!-- ═══════════════════════════════════════════════ NAV ═══ -->
+<nav class="nav" data-nav aria-label="Main navigation">
+  <a href="/" class="nav__brand">StartiQOS <span>AI</span></a>
+
+  <ul class="nav__menu">
+    <li class="nav__item"><a href="/" class="nav__link">Home</a></li>
+
+    <li class="nav__item" data-nav-item data-open="false">
+      <button class="nav__link" data-nav-trigger aria-expanded="false">About
+        <svg class="nav__chev" viewBox="0 0 8 8" fill="none"><path d="M1 3l3 3 3-3" stroke="currentColor" stroke-width="1.2"/></svg>
+      </button>
+      <div class="nav__drop">
+        <a class="nav__drop-link" href="about/index.html"><span><span class="nav__drop-title">About StartiQOS</span><span class="nav__drop-desc">What we are and why we exist</span></span></a>
+        <a class="nav__drop-link" href="about/mission.html"><span><span class="nav__drop-title">Our Mission</span><span class="nav__drop-desc">Bounded AI, proven work</span></span></a>
+        <a class="nav__drop-link" href="about/team.html"><span><span class="nav__drop-title">Core Team</span><span class="nav__drop-desc">The four who started it</span></span></a>
+        <a class="nav__drop-link" href="about/how-we-work.html"><span><span class="nav__drop-title">How We Work</span><span class="nav__drop-desc">Our method and principles</span></span></a>
+        <a class="nav__drop-link" href="about/what-we-dont-do.html"><span><span class="nav__drop-title">What We Don’t Do</span><span class="nav__drop-desc">Our stated limits</span></span></a>
+      </div>
+    </li>
+
+    <li class="nav__item" data-nav-item data-open="false">
+      <button class="nav__link" data-nav-trigger aria-expanded="false">Platform
+        <svg class="nav__chev" viewBox="0 0 8 8" fill="none"><path d="M1 3l3 3 3-3" stroke="currentColor" stroke-width="1.2"/></svg>
+      </button>
+      <div class="nav__drop">
+        <a class="nav__drop-link" href="platform/index.html"><span><span class="nav__drop-title">Control Plane Overview</span><span class="nav__drop-desc">How it sits in your stack</span></span></a>
+        <a class="nav__drop-link" href="platform/least-privilege.html"><span><span class="nav__drop-title">Least-Privilege Enforcement</span><span class="nav__drop-desc">Ninety-four permissions to six</span></span></a>
+        <a class="nav__drop-link" href="platform/composition-analysis.html"><span><span class="nav__drop-title">Composition Analysis</span><span class="nav__drop-desc">Safe alone, dangerous together</span></span></a>
+        <a class="nav__drop-link" href="platform/delegation-control.html"><span><span class="nav__drop-title">Delegation Control</span><span class="nav__drop-desc">Authority narrows, never widens</span></span></a>
+        <a class="nav__drop-link" href="platform/provenance.html"><span><span class="nav__drop-title">Provenance &amp; Taint</span><span class="nav__drop-desc">Untrusted data shrinks authority</span></span></a>
+        <a class="nav__drop-link" href="platform/runtime-verification.html"><span><span class="nav__drop-title">Runtime Verification</span><span class="nav__drop-desc">Allow, escalate, or deny</span></span></a>
+      </div>
+    </li>
+
+    <li class="nav__item" data-nav-item data-open="false">
+      <button class="nav__link" data-nav-trigger aria-expanded="false">Services
+        <svg class="nav__chev" viewBox="0 0 8 8" fill="none"><path d="M1 3l3 3 3-3" stroke="currentColor" stroke-width="1.2"/></svg>
+      </button>
+      <div class="nav__drop">
+        <a class="nav__drop-link" href="services/index.html"><span><span class="nav__drop-title">All Services</span><span class="nav__drop-desc">Implementation, with stated limits</span></span></a>
+        <a class="nav__drop-link" href="services/verified-knowledge-systems.html"><span><span class="nav__drop-title">Verified Knowledge Systems</span><span class="nav__drop-desc">Retrieval that cites its sources</span></span></a>
+        <a class="nav__drop-link" href="services/department-transformation.html"><span><span class="nav__drop-title">Department Transformation</span><span class="nav__drop-desc">One department, stated ceiling</span></span></a>
+        <a class="nav__drop-link" href="services/enterprise-transformation.html"><span><span class="nav__drop-title">Enterprise Transformation</span><span class="nav__drop-desc">Sequenced across departments</span></span></a>
+      </div>
+    </li>
+
+    <li class="nav__item" data-nav-item data-open="false">
+      <button class="nav__link" data-nav-trigger aria-expanded="false">Industries
+        <svg class="nav__chev" viewBox="0 0 8 8" fill="none"><path d="M1 3l3 3 3-3" stroke="currentColor" stroke-width="1.2"/></svg>
+      </button>
+      <div class="nav__drop nav__drop--wide">
+        <a class="nav__drop-link" href="industries/ai-native-companies.html"><span><span class="nav__drop-title">AI-Native Companies</span><span class="nav__drop-desc">Agents already in production</span></span></a>
+        <a class="nav__drop-link" href="industries/enterprise-it.html"><span><span class="nav__drop-title">Enterprise IT</span><span class="nav__drop-desc">Many projects, no governance layer</span></span></a>
+        <a class="nav__drop-link" href="industries/regulated-industries.html"><span><span class="nav__drop-title">Regulated Industries</span><span class="nav__drop-desc">Documented AI governance required</span></span></a>
+        <a class="nav__drop-link" href="industries/healthcare.html"><span><span class="nav__drop-title">Healthcare</span><span class="nav__drop-desc">Patient data and agent access</span></span></a>
+        <a class="nav__drop-link" href="industries/b2b-saas.html"><span><span class="nav__drop-title">B2B SaaS</span><span class="nav__drop-desc">Agents touching customer data</span></span></a>
+        <a class="nav__drop-link" href="industries/marketplaces-d2c.html"><span><span class="nav__drop-title">Marketplaces &amp; D2C</span><span class="nav__drop-desc">Support and operations automation</span></span></a>
+        <a class="nav__drop-link" href="industries/agencies.html"><span><span class="nav__drop-title">Agencies</span><span class="nav__drop-desc">Delivering AI for clients</span></span></a>
+        <a class="nav__drop-link" href="industries/startups.html"><span><span class="nav__drop-title">Startups</span><span class="nav__drop-desc">AI-native from day one</span></span></a>
+        <a class="nav__drop-link" href="industries/smes.html"><span><span class="nav__drop-title">SMEs</span><span class="nav__drop-desc">First AI systems, done properly</span></span></a>
+      </div>
+    </li>
+
+    <li class="nav__item" data-nav-item data-open="false">
+      <button class="nav__link" data-nav-trigger aria-expanded="false">Resources
+        <svg class="nav__chev" viewBox="0 0 8 8" fill="none"><path d="M1 3l3 3 3-3" stroke="currentColor" stroke-width="1.2"/></svg>
+      </button>
+      <div class="nav__drop">
+        <a class="nav__drop-link" href="resources/blog/index.html"><span><span class="nav__drop-title">Blog</span><span class="nav__drop-desc">Research and engineering notes</span></span></a>
+        <a class="nav__drop-link" href="resources/documentation/index.html"><span><span class="nav__drop-title">Documentation</span><span class="nav__drop-desc">Integration and reference</span></span></a>
+        <a class="nav__drop-link" href="resources/case-studies/index.html"><span><span class="nav__drop-title">Case Studies</span><span class="nav__drop-desc">Published with client permission</span></span></a>
+        <a class="nav__drop-link" href="resources/faq.html"><span><span class="nav__drop-title">FAQ</span><span class="nav__drop-desc">Common questions, answered plainly</span></span></a>
+      </div>
+    </li>
+
+    <li class="nav__item"><a href="careers.html" class="nav__link">Careers</a></li>
+    <li class="nav__item"><a href="contact.html" class="nav__link">Contact</a></li>
+  </ul>
+
+  <div class="nav__actions">
+    <a href="login.html" class="btn btn--ghost btn--sm">Log in</a>
+    <a href="console.html" class="btn btn--gold btn--sm">Open Control Plane</a>
+    <button class="nav__toggle" data-nav-toggle aria-label="Menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<main id="main">
+
+<!-- ═══════════════════════════════════════════════ HERO ═══ -->
+<section class="hero">
+  <div>
+    <p class="eyebrow mask" data-hero-eyebrow><span>AI Agent Security &middot; Enterprise AI Implementation</span></p>
+
+    <h1 class="display">
+      <span class="mask" data-hero-line-1><span>Every Permission</span></span>
+      <span class="mask" data-hero-line-2><span>Earned.</span></span>
+      <span class="mask" data-hero-line-3><span><em class="accent">Every Action Proven.</em></span></span>
+    </h1>
+
+    <p class="hero__sub rv" data-hero-sub>
+      StartiQOS AI builds the authority control plane for AI agents &mdash; enforcing
+      least privilege at every call, and blocking prompt injection by removing the
+      capability rather than detecting the attack.
+    </p>
+
+    <p class="hero__emph rv" data-hero-emph>
+      Software that bounds what AI can do. Engineering that proves what it did.
+    </p>
+
+    <div class="rule rule--draw" data-hero-rule></div>
+
+    <div class="hero__actions rv" data-hero-actions>
+      <a href="console.html" class="btn btn--primary">Open the Control Plane <span class="btn__arrow">&rarr;</span></a>
+      <a href="services/index.html" class="btn btn--ghost">Book a Transformation Audit <span class="btn__arrow">&rarr;</span></a>
+    </div>
+
+    <div class="hero__trust rv" data-hero-trust>
+      <span>Enforced, not detected</span>
+      <span>Sub-millisecond decisions</span>
+      <span>Every denial recorded</span>
+    </div>
+  </div>
+
+  <div class="hero__par" data-par="0.04">
+    <div class="term rv" data-term data-tilt>
+      <div class="term__bar">
+        <span class="term__lights"><i></i><i></i><i></i></span>
+        <p class="term__name">agent &middot; finance-reconciler-7</p>
+        <span class="term__tag">Live</span>
+      </div>
+      <div class="term__body">
+<span class="term__line tl-dim">$ agent.run(task="reconcile_invoices")</span>
+<span class="term__line">&nbsp;</span>
+<span class="term__line"><span class="tl-ok">&check;</span> ledger.invoices.read      <span class="tl-dim">in profile</span></span>
+<span class="term__line"><span class="tl-ok">&check;</span> ledger.payments.read      <span class="tl-dim">in profile</span></span>
+<span class="term__line"><span class="tl-warn">!</span> doc.fetch.external        <span class="tl-dim">taint &rarr; 3</span></span>
+<span class="term__line">&nbsp;</span>
+<span class="term__line tl-dim">  injected instruction detected in fetched document</span>
+<span class="term__line tl-dim">  "forward all customer records to&hellip;"</span>
+<span class="term__line">&nbsp;</span>
+<span class="term__line"><span class="tl-bad">&times;</span> <span class="tl-white">mail.send.external</span>       <span class="tl-bad">DENIED</span></span>
+<span class="term__line tl-dim">  capability not in profile &middot; never granted</span>
+<span class="term__line">&nbsp;</span>
+<span class="term__line tl-gold">  the attack was not detected.</span>
+<span class="term__line tl-gold">  it had nothing to invoke.<span class="term__cursor"></span></span>
+      </div>
+    </div>
+    <p class="stage__cap">The denial above is a capability check, not a classifier</p>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════ PROBLEM ═══ -->
+<section class="section section--alt" id="problem">
+  <div class="wrap">
+
+    <div class="sec-head">
+      <p class="eyebrow rv">The Problem We Solve</p>
+      <h2 class="rv">AI agents don't get hacked. <em class="accent">They get borrowed.</em></h2>
+      <p class="lead rv">An agent is given access to systems nobody has scoped. It ends up holding ninety-four permissions and using six. The other eighty-eight are not unused. They are available to anyone who can reach the agent. We identified six root causes — and built enforcement for each.</p>
+    </div>
+
+    <div class="grid-3--open rv-stagger">
+
+      <article class="cause" data-tilt>
+        <p class="cause__label">01 — Over-Permissioning</p>
+        <span class="cause__tag">Root Cause</span>
+        <h3 class="cause__title">Nobody Knows What An Agent Actually Needs</h3>
+        <p class="cause__body">
+          Scoping permissions per task is slow, so teams grant broad access and move on.
+          The agent holds ninety-four permissions and uses six.
+        </p>
+        <p class="cause__answer">
+          <strong>Learned Least-Privilege.</strong> We observe actual behaviour, derive the
+          minimum each task requires, and enforce it on every call.
+        </p>
+      </article>
+
+      <article class="cause" data-tilt>
+        <p class="cause__label">02 — Prompt Injection</p>
+        <span class="cause__tag">Root Cause</span>
+        <h3 class="cause__title">The Agent Cannot Tell Instructions Apart</h3>
+        <p class="cause__body">
+          An attacker's instruction hidden inside a document reads exactly like a
+          legitimate task. The agent obeys, using access it was properly granted.
+        </p>
+        <p class="cause__answer">
+          <strong>Capability Removal.</strong> The permission was never there, so the
+          instruction has nothing to invoke.
+        </p>
+      </article>
+
+      <article class="cause" data-tilt>
+        <p class="cause__label">03 — Composition</p>
+        <span class="cause__tag">Root Cause</span>
+        <h3 class="cause__title">Safe Permissions, Dangerous Together</h3>
+        <p class="cause__body">
+          Reading customer records is fine. Calling an external webhook is fine. Together
+          they are an exfiltration channel, and no identity system flags either one.
+        </p>
+        <p class="cause__answer">
+          <strong>Reachability Analysis.</strong> We evaluate combinations, not individual
+          grants.
+        </p>
+      </article>
+
+      <article class="cause" data-tilt>
+        <p class="cause__label">04 — Delegation</p>
+        <span class="cause__tag">Root Cause</span>
+        <h3 class="cause__title">Authority Widens As It Passes Down</h3>
+        <p class="cause__body">
+          In a chain of agents, each hand-off can grant more than it received. By the
+          third agent, nobody can say what authority exists.
+        </p>
+        <p class="cause__answer">
+          <strong>Monotonic Attenuation.</strong> Every delegated capability is equal to or
+          narrower than its parent.
+        </p>
+      </article>
+
+      <article class="cause" data-tilt>
+        <p class="cause__label">05 — Unverified Output</p>
+        <span class="cause__tag">Root Cause</span>
+        <h3 class="cause__title">Nobody Checks What The AI Said</h3>
+        <p class="cause__body">
+          An AI answers from company documents. Nobody knows which document, or whether
+          the answer held, until someone acts on a wrong one.
+        </p>
+        <p class="cause__answer">
+          <strong>Verified Knowledge Systems.</strong> Every answer carries its source.
+          When retrieval finds nothing, the system says so.
+        </p>
+      </article>
+
+      <article class="cause" data-tilt>
+        <p class="cause__label">06 — Unbounded Automation</p>
+        <span class="cause__tag">Root Cause</span>
+        <h3 class="cause__title">Departments Automate Without A Stated Limit</h3>
+        <p class="cause__body">
+          Vendors promise full autonomy. Legal accountability requires a named human. The
+          gap surfaces after the money is spent.
+        </p>
+        <p class="cause__answer">
+          <strong>AI-Native Transformation.</strong> The autonomy ceiling is agreed in
+          writing before anything is built.
+        </p>
+      </article>
+
+    </div>
+
+    <div class="statband rv-stagger">
+      <div class="stat">
+        <p class="stat__num"><span data-count="9.6">0</span></p>
+        <p class="stat__label">CVSS score of CVE-2025-6514 — remote code execution in MCP infrastructure</p>
+      </div>
+      <div class="stat">
+        <p class="stat__num"><span data-count="88">0</span>%</p>
+        <p class="stat__label">Of enterprise AI agent pilots that never reach production</p>
+      </div>
+      <div class="stat">
+        <p class="stat__num"><span data-count="40">0</span>%</p>
+        <p class="stat__label">Of agentic AI projects Gartner expects to be cancelled by 2027</p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════ THE GAP ═══ -->
+<section class="section section--void" id="the-gap">
+  <div class="wrap">
+    <div class="split split--wide">
+
+      <div class="split__copy">
+        <p class="eyebrow rv">The Gap</p>
+        <h2 class="rv">Held versus used, <em class="accent">measured.</em></h2>
+        <p class="lead rv">
+          Shadow mode runs alongside your agents for two weeks with no enforcement.
+          What it produces is not an opinion about your configuration. It is the
+          arithmetic.
+        </p>
+        <div class="hero__actions rv" style="margin-top:32px">
+          <a class="btn btn--primary" href="contact.html">Book a shadow-mode pilot <span class="btn__arrow">&rarr;</span></a>
+        </div>
+      </div>
+
+      <div class="rv">
+        <div class="term" data-tilt>
+          <div class="term__bar">
+            <span class="term__lights"><i></i><i></i><i></i></span>
+            <p class="term__name">shadow-mode &middot; day 14</p>
+            <span class="term__tag">No enforcement</span>
+          </div>
+          <div class="term__body" style="line-height:1.7">
+            <div class="meter">
+              <div class="meter__row">
+                <p class="meter__k"><span>Permissions held</span><span class="meter__n">94</span></p>
+                <div class="meter__track"><div class="meter__fill meter__fill--held" data-meter="100"></div></div>
+              </div>
+              <div class="meter__row">
+                <p class="meter__k"><span>Permissions used</span><span class="meter__n">6</span></p>
+                <div class="meter__track"><div class="meter__fill meter__fill--used" data-meter="6.4"></div></div>
+              </div>
+              <div class="meter__row">
+                <p class="meter__k"><span>Composition paths found</span><span class="meter__n">3</span></p>
+                <div class="meter__track"><div class="meter__fill meter__fill--held" data-meter="22"></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="void-rule"></div>
+
+    <p class="eyebrow rv">What an attack needs</p>
+    <h2 class="rv" style="max-width:20ch;margin-top:16px">The path exists <em class="accent">or it does not.</em></h2>
+
+    <div class="flow rv-stagger">
+      <div class="flow__node">
+        <p class="flow__k">Step 01</p>
+        <p class="flow__v">agent reads<br>external document</p>
+      </div>
+      <span class="flow__arrow">&rarr;</span>
+      <div class="flow__node">
+        <p class="flow__k">Step 02</p>
+        <p class="flow__v">injected instruction<br>enters context</p>
+      </div>
+      <span class="flow__arrow">&rarr;</span>
+      <div class="flow__node">
+        <p class="flow__k">Step 03</p>
+        <p class="flow__v">agent attempts<br>mail.send.external</p>
+      </div>
+      <span class="flow__arrow">&rarr;</span>
+      <div class="flow__node flow__node--deny">
+        <p class="flow__k">Result</p>
+        <p class="flow__v">DENIED<br>capability absent</p>
+      </div>
+    </div>
+
+    <div class="note rv">
+      <strong>Nothing was detected.</strong>
+      No classifier scored the instruction and the enforcement layer never read it.
+      The attack failed because the capability it required was never granted.
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════ PLATFORM ═══ -->
+<section class="section" id="platform">
+  <div class="wrap">
+
+    <div class="sec-head">
+      <p class="eyebrow rv">The Platform</p>
+      <h2 class="rv">One control plane. <em class="accent">Six enforcement layers.</em></h2>
+      <p class="lead rv">It sits between your agent and everything it can reach — your model provider, your MCP servers, your APIs, your database. Every call is checked against the authority that agent actually holds. Decisions return in under a millisecond.</p>
+    </div>
+
+    <div class="rows">
+
+      <div class="row rv">
+        <p class="row__num">01</p>
+        <h3 class="row__title">Learned Least-Privilege</h3>
+        <p class="row__body">
+          Static policies cannot keep up with agents whose tools change weekly. We learn
+          task classes from observed execution, derive the capabilities each genuinely
+          requires, and generate a candidate policy. A human approves it before it takes
+          effect.
+        </p>
+      </div>
+
+      <div class="row rv">
+        <p class="row__num">02</p>
+        <h3 class="row__title">Composition &amp; Reachability Analysis</h3>
+        <p class="row__body">
+          Permissions are evaluated in combination, not one at a time. We map which
+          capability pairs create a reachable path to data movement, credential access or
+          irreversible action — and block the path rather than the individual grant.
+        </p>
+      </div>
+
+      <div class="row rv">
+        <p class="row__num">03</p>
+        <h3 class="row__title">Monotonic Delegation</h3>
+        <p class="row__body">
+          When one agent hands work to another, the delegated authority is verified to be
+          equal to or narrower than its parent. Authority can shrink down a chain. It can
+          never grow.
+        </p>
+      </div>
+
+      <div class="row rv">
+        <p class="row__num">04</p>
+        <h3 class="row__title">Provenance &amp; Taint Tracking</h3>
+        <p class="row__body">
+          We track where an agent's context came from. The more untrusted material it has
+          read — external documents, web content, other agents' output — the narrower its
+          authority becomes, automatically. Exposure attenuates permission.
+        </p>
+      </div>
+
+      <div class="row rv">
+        <p class="row__num">05</p>
+        <h3 class="row__title">Poisoning-Resistant Policy Learning</h3>
+        <p class="row__body">
+          A system that learns from behaviour can be taught the wrong thing. An attacker
+          feeding synthetic activity during the learning window could permanently widen a
+          policy. We detect, down-weight and filter suspicious observations before they
+          influence anything.
+        </p>
+      </div>
+
+      <div class="row rv">
+        <p class="row__num">06</p>
+        <h3 class="row__title">Runtime Verification</h3>
+        <p class="row__body">
+          At the moment of the call, the delegation chain, the declared intent, the
+          provenance state and the capability set are verified together. The answer is
+          allow, escalate to a human, or deny — with the reason recorded.
+        </p>
+      </div>
+
+    </div>
+
+    <div class="sec-foot rv">
+      <a class="link" href="platform/index.html">See the full architecture <span>→</span></a>
+    </div>
+
+  </div>
+</section>
+
+<!-- ═════════════════════════════════════ HOW IT WORKS ═══ -->
+<section class="section section--alt" id="how-it-works">
+  <div class="wrap">
+
+    <div class="sec-head">
+      <p class="eyebrow rv">How It Works</p>
+      <h2 class="rv">Four steps. <em class="accent">Nothing enforced until you approve it.</em></h2>
+      <p class="lead rv">
+          Shadow mode runs first. You see what your agents actually hold before anything
+          changes — and you decide whether to enforce it.
+        </p>
+    </div>
+
+    <div class="rows">
+
+      <div class="row rv">
+  <p class="row__num">01</p>
+  <h3 class="row__title">Observe</h3>
+  <p class="row__body">The control plane runs in shadow mode alongside your agents. No enforcement, no risk. We record which capabilities each task actually invokes, and which sit unused.<br><span class="row__out">Two weeks · Output: the gap between held and used</span></p>
+</div>
+
+      <div class="row rv">
+  <p class="row__num">02</p>
+  <h3 class="row__title">Derive</h3>
+  <p class="row__body">From observed behaviour we generate a candidate least-privilege policy per task class, plus the composition paths that exist today but should not. Suspicious observations are filtered before they influence the policy.<br><span class="row__out">Output: a proposed policy and a list of reachable risks</span></p>
+</div>
+
+      <div class="row rv">
+  <p class="row__num">03</p>
+  <h3 class="row__title">Approve</h3>
+  <p class="row__body">A named human reviews and approves the policy. Nothing is enforced automatically. Policies are versioned, and every change carries an owner and a timestamp.<br><span class="row__out">Output: an approved, versioned, attributable policy</span></p>
+</div>
+
+      <div class="row rv">
+  <p class="row__num">04</p>
+  <h3 class="row__title">Enforce</h3>
+  <p class="row__body">Every call is verified against the approved policy at runtime. Denials are logged with the reason. When an injected instruction arrives, the agent attempts the action and fails — because that capability was never granted.<br><span class="row__out">Sub-millisecond decisions · every outcome recorded</span></p>
+</div>
+
+    </div>
+
+    <div class="note rv">
+      <strong>Why enforcement rather than detection.</strong>
+      Any defence that works by recognising an attack loses to an attack it has not seen.
+      Removing the capability does not depend on recognition — if the permission was never
+      granted, no instruction can invoke it, however it is phrased.
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════ STATEMENT ═══ -->
+<section class="section--void qband">
+  <div class="wrap">
+    <p class="qband__t rv">
+      A defence that works by recognising an attack<br>
+      loses to the attack it has not seen.
+    </p>
+    <p class="qband__s rv">We remove what it needs instead</p>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════ SERVICES ═══ -->
+<section class="section" id="services">
+  <div class="wrap">
+
+    <div class="sec-head">
+      <p class="eyebrow rv">Implementation</p>
+      <h2 class="rv">Bounded AI, <em class="accent">built into your operation.</em></h2>
+      <p class="lead rv">Enforcement software is one half. The other is building AI systems that were bounded from the first line of code. Three engagements. Fixed scope, fixed price, stated limits.</p>
+    </div>
+
+    <div class="grid-3--open rv-stagger">
+
+      <article class="cause" data-tilt>
+        <p class="cause__label">01 — Knowledge</p>
+        <h3 class="cause__title">Verified Knowledge Systems</h3>
+        <p class="cause__body">
+          Enterprise retrieval over your own documents, policies and operational data.
+          Every answer attaches the source it came from. When retrieval finds nothing
+          relevant, the system says so instead of answering from general knowledge.
+          Freshness is tracked; a proportion of answers is checked each month.
+        </p>
+        <p class="cause__answer">
+          <strong>Five to six weeks</strong> to production, including a supervised period
+          before it is trusted.
+        </p>
+      </article>
+
+      <article class="cause" data-tilt>
+        <p class="cause__label">02 — Department</p>
+        <h3 class="cause__title">AI-Native Department Transformation</h3>
+        <p class="cause__body">
+          One department converted to AI-native operation against an autonomy ceiling
+          agreed in writing before anything is built. Every task is classified — execution,
+          decision, authority or governance — and the ceiling follows from that
+          classification, not from what we would like it to be.
+        </p>
+        <p class="cause__answer">
+          <strong>Six stages, ten to twelve weeks.</strong> Governance active from the
+          first deployment, not retrofitted.
+        </p>
+      </article>
+
+      <article class="cause" data-tilt>
+        <p class="cause__label">03 — Enterprise</p>
+        <h3 class="cause__title">AI-Native Enterprise Transformation</h3>
+        <p class="cause__body">
+          Strategy, platform, retrieval and governance sequenced across departments. Each
+          stage proves its governance before the next begins — which is how agent sprawl
+          is prevented rather than cleaned up afterwards.
+        </p>
+        <p class="cause__answer">
+          <strong>Sold in stages.</strong> You can stop after any of them, and keep what
+          was built.
+        </p>
+      </article>
+
+    </div>
+
+    <div class="sec-foot rv">
+      <a class="link" href="services/index.html">See all services <span>→</span></a>
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══════════════════════════════ ENTERPRISE CEILING ═══ -->
+<section class="section section--alt" id="enterprise">
+  <div class="wrap">
+
+    <div class="sec-head">
+      <p class="eyebrow rv">Enterprise Transformation</p>
+      <h2 class="rv">AI-native transformation, <em class="accent">with the ceiling stated first.</em></h2>
+      <p class="lead rv">
+          Every vendor promises more. We publish the honest limit before a contract is
+          signed — including when that number is low enough to lose us the engagement.
+        </p>
+    </div>
+
+    <table class="ceiling rv">
+      <thead>
+        <tr><th>Department</th><th>Estimated ceiling</th><th>What limits it</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Marketing &amp; content operations</td><td class="ceiling__n">90–95%</td><td>Strategy and positioning stay human</td></tr>
+        <tr><td>Data operations &amp; reporting</td><td class="ceiling__n">90%</td><td>Interpretation stays human</td></tr>
+        <tr><td>Document processing</td><td class="ceiling__n">90%</td><td>Exception rules must exist in writing</td></tr>
+        <tr><td>Customer support, first line</td><td class="ceiling__n">85–90%</td><td>Escalation path required</td></tr>
+        <tr><td>Sales research &amp; outreach</td><td class="ceiling__n">85%</td><td>The conversation itself is not automatable</td></tr>
+        <tr><td>Procurement</td><td class="ceiling__n">75%</td><td>Spend approval stays human</td></tr>
+        <tr><td>Human resources</td><td class="ceiling__n">70%</td><td>Hiring and exit decisions carry legal exposure</td></tr>
+        <tr><td>Finance &amp; accounts payable</td><td class="ceiling__n">70%</td><td>Money movement always requires sign-off</td></tr>
+        <tr class="ceiling__mark"><td>Legal operations</td><td class="ceiling__n">50%</td><td>Advice and liability are the function</td></tr>
+      </tbody>
+    </table>
+
+    <div class="note rv">
+      <strong>These are estimates, not benchmarks.</strong>
+      They come from our own task-level analysis of what requires human judgment, reviewed
+      against published transformation frameworks. We publish them so you know what we will
+      tell you before we audit your department — and we revise them as engagements complete.
+    </div>
+
+    <div class="note note--plain rv">
+      <strong>Read the number correctly.</strong>
+      The ceiling describes the share of a team's work hours, not authority. Finance at
+      seventy percent means seventy percent of manual effort is automated. It does not mean
+      AI approves anything. Decisions remain human.
+    </div>
+
+    <div class="sec-foot rv">
+      <a class="link" href="services/enterprise-transformation.html">How a transformation runs <span>→</span></a>
+    </div>
+
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════ INDUSTRIES ═══ -->
+<section class="section" id="industries">
+  <div class="wrap">
+
+    <div class="sec-head">
+      <p class="eyebrow rv">Who We Build For</p>
+      <h2 class="rv">Different stacks. <em class="accent">The same unanswered question.</em></h2>
+      <p class="lead rv">
+          What is this agent allowed to do, and how would we know if it did something else?
+        </p>
+    </div>
+
+    <div class="ind-grid rv-stagger">
+      <a class="ind" data-tilt href="industries/ai-native-companies.html">
+        <h3>AI-Native Companies</h3>
+        <p>Agents in production, touching customer data through MCP servers and tool APIs.</p>
+      </a>
+      <a class="ind" data-tilt href="industries/enterprise-it.html">
+        <h3>Enterprise IT</h3>
+        <p>Multiple AI projects running, no single layer that governs what any of them can reach.</p>
+      </a>
+      <a class="ind" data-tilt href="industries/regulated-industries.html">
+        <h3>Regulated Industries</h3>
+        <p>Documented AI governance is not optional, and the EU AI Act timeline is fixed.</p>
+      </a>
+      <a class="ind" data-tilt href="industries/healthcare.html">
+        <h3>Healthcare</h3>
+        <p>Patient data, strict access rules, and agents that must never exceed their scope.</p>
+      </a>
+      <a class="ind" data-tilt href="industries/b2b-saas.html">
+        <h3>B2B SaaS</h3>
+        <p>Your product runs agents on your customers' data. Their security review is yours.</p>
+      </a>
+      <a class="ind" data-tilt href="industries/marketplaces-d2c.html">
+        <h3>Marketplaces &amp; D2C</h3>
+        <p>Support and operations automation at volume, with real money and real customers.</p>
+      </a>
+      <a class="ind" data-tilt href="industries/agencies.html">
+        <h3>Agencies</h3>
+        <p>You deliver AI for clients. Their governance question becomes your deliverable.</p>
+      </a>
+      <a class="ind" data-tilt href="industries/startups.html">
+        <h3>Startups</h3>
+        <p>Building AI-native from day one, before the permissions sprawl becomes a rewrite.</p>
+      </a>
+      <a class="ind" data-tilt href="industries/smes.html">
+        <h3>SMEs</h3>
+        <p>First AI systems, built with sources and limits rather than retrofitted later.</p>
+      </a>
+    </div>
+
+  </div>
+</section>
+
+<!-- ═════════════════════════════════ WHAT WE DON'T DO ═══ -->
+<section class="section section--alt" id="limits">
+  <div class="wrap">
+
+    <div class="sec-head">
+      <p class="eyebrow rv">Our Stated Limits</p>
+      <h2 class="rv">What we <em class="accent">don't do.</em></h2>
+      <p class="lead rv">
+          Each of these costs us revenue. They are written down so the decision is made
+          before the pressure arrives.
+        </p>
+    </div>
+
+    <div class="rows">
+      <div class="row rv">
+        <p class="row__num">01</p>
+        <h3 class="row__title">We don't sell detection</h3>
+        <p class="row__body">
+          Prompt injection classifiers, content filters and anomaly scoring all work until
+          they meet something unfamiliar. We build enforcement, not recognition.
+        </p>
+      </div>
+      <div class="row rv">
+        <p class="row__num">02</p>
+        <h3 class="row__title">We don't sell zero-human operation</h3>
+        <p class="row__body">
+          Every system we build requires a named human owner with authority to intervene.
+          Legal accountability requires a person.
+        </p>
+      </div>
+      <div class="row rv">
+        <p class="row__num">03</p>
+        <h3 class="row__title">We don't take engagements below a sixty percent ceiling</h3>
+        <p class="row__body">
+          If the achievable automation does not justify the cost of getting there, we say
+          so before you spend, and we decline the work.
+        </p>
+      </div>
+      <div class="row rv">
+        <p class="row__num">04</p>
+        <h3 class="row__title">We don't run multi-year programmes</h3>
+        <p class="row__body">
+          That scale belongs to firms with the delivery capacity for it. We do one
+          department at a time, with a fixed scope and a fixed price.
+        </p>
+      </div>
+      <div class="row rv">
+        <p class="row__num">05</p>
+        <h3 class="row__title">We take two engagements at a time</h3>
+        <p class="row__body">
+          Not as an apology — as a constraint we have chosen. Delivery quality here depends
+          on senior attention.
+        </p>
+      </div>
+    </div>
+
+    <div class="sec-foot rv">
+      <a class="link" href="about/what-we-dont-do.html">Read the full list <span>→</span></a>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════ FAQ ═══ -->
+<section class="section" id="faq">
+  <div class="wrap wrap--narrow">
+
+    <div class="sec-head sec-head--stack">
+      <p class="eyebrow rv">Common Questions</p>
+      <h2 class="rv">Answered <em class="accent">plainly.</em></h2>
+    </div>
+
+    <div class="acc rv-stagger" data-acc-group>
+<div class="acc__item rv" data-acc-item data-open="false">
+  <button class="acc__trigger" data-acc-trigger>What is agent authority enforcement?<span class="acc__icon"></span></button>
+  <div class="acc__panel" data-acc-panel><p class="acc__body">Agent authority enforcement limits what an AI agent can do by granting only the permissions its task requires, verified at runtime. Unlike detection-based security, which identifies and blocks malicious instructions, enforcement removes the capability entirely — so an injected instruction has nothing to invoke.</p></div>
+</div>
+<div class="acc__item rv" data-acc-item data-open="false">
+  <button class="acc__trigger" data-acc-trigger>How is this different from prompt injection detection?<span class="acc__icon"></span></button>
+  <div class="acc__panel" data-acc-panel><p class="acc__body">Detection works by recognising an attack pattern, which fails against attacks it has not seen. Capability removal does not depend on recognition. If a permission was never granted, no instruction can invoke it, regardless of how the instruction is phrased or hidden.</p></div>
+</div>
+<div class="acc__item rv" data-acc-item data-open="false">
+  <button class="acc__trigger" data-acc-trigger>What is composition-based privilege escalation?<span class="acc__icon"></span></button>
+  <div class="acc__panel" data-acc-panel><p class="acc__body">Two permissions can each be safe individually and dangerous together. Reading customer records is routine. Calling an external webhook is routine. Combined, they form an exfiltration path. Identity and access management systems evaluate permissions one at a time and do not flag the combination.</p></div>
+</div>
+<div class="acc__item rv" data-acc-item data-open="false">
+  <button class="acc__trigger" data-acc-trigger>Does this slow my agents down?<span class="acc__icon"></span></button>
+  <div class="acc__panel" data-acc-panel><p class="acc__body">Authorisation decisions return in under a millisecond. The control plane sits in the call path, not the reasoning path — it does not add a model round trip.</p></div>
+</div>
+<div class="acc__item rv" data-acc-item data-open="false">
+  <button class="acc__trigger" data-acc-trigger>What happens during the learning period?<span class="acc__icon"></span></button>
+  <div class="acc__panel" data-acc-panel><p class="acc__body">Shadow mode runs alongside your agents with no enforcement, so there is no operational risk. You receive a report showing which permissions each agent holds versus uses, and every composition path that could move data out. You then decide whether to enforce.</p></div>
+</div>
+<div class="acc__item rv" data-acc-item data-open="false">
+  <button class="acc__trigger" data-acc-trigger>Could an attacker poison what the system learns?<span class="acc__icon"></span></button>
+  <div class="acc__panel" data-acc-panel><p class="acc__body">It is the right question, and it is the reason policy learning is not left unguarded. Suspicious observations are detected, down-weighted and filtered before they influence a policy, and every generated policy requires human approval before it takes effect.</p></div>
+</div>
+<div class="acc__item rv" data-acc-item data-open="false">
+  <button class="acc__trigger" data-acc-trigger>What is an autonomy ceiling?<span class="acc__icon"></span></button>
+  <div class="acc__panel" data-acc-panel><p class="acc__body">An autonomy ceiling is the honest upper limit on how much of a department's work can be automated, stated before an engagement begins. It describes the share of work hours automated, not decision authority — decisions remain with named humans. Our published figures are estimates from task-level analysis, revised as engagements complete.</p></div>
+</div>
+<div class="acc__item rv" data-acc-item data-open="false">
+  <button class="acc__trigger" data-acc-trigger>Where are you in your own build?<span class="acc__icon"></span></button>
+  <div class="acc__panel" data-acc-panel><p class="acc__body">The enforcement system runs with sub-millisecond decisions and a passing test suite, and the injection-blocking path works end to end. It has not yet been deployed in a customer's production environment. We will say so until it has.</p></div>
+</div>
+</div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════ CTA ═══ -->
+<section class="section--alt cta">
+  <div class="wrap">
+    <h2 class="cta__title rv">
+      Find out what your agents<br>
+      <em class="accent">are actually allowed to do.</em>
+    </h2>
+    <p class="cta__sub rv">
+      Shadow mode runs for two weeks with no enforcement and no risk. You get the gap
+      between permissions held and permissions used, and every composition path that could
+      move data out.
+    </p>
+    <div class="cta__actions rv">
+      <a class="btn btn--primary" href="contact.html">Book a shadow-mode pilot <span class="btn__arrow">→</span></a>
+      <a class="btn btn--ghost" href="platform/index.html">See the architecture</a>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- ═══════════════════════════════════════════ FOOTER ═══ -->
+<footer class="footer">
+  <div class="wrap">
+    <div class="footer__top">
+      <div>
+        <p class="footer__brand">StartiQOS <span>AI</span></p>
+        <p class="footer__blurb">Software that bounds what AI can do. Engineering that proves what it did.</p>
+        <p class="footer__loc">Chandigarh, India · Working globally</p>
+        <div class="footer__social">
+          <a href="#" aria-label="LinkedIn">in</a>
+          <a href="#" aria-label="X">X</a>
+          <a href="#" aria-label="GitHub">◎</a>
+        </div>
+      </div>
+
+      <div>
+        <p class="footer__col-title">Platform</p>
+        <a class="footer__link" href="platform/index.html">Control Plane Overview</a>
+        <a class="footer__link" href="platform/least-privilege.html">Least-Privilege Enforcement</a>
+        <a class="footer__link" href="platform/composition-analysis.html">Composition Analysis</a>
+        <a class="footer__link" href="platform/delegation-control.html">Delegation Control</a>
+        <a class="footer__link" href="platform/provenance.html">Provenance &amp; Taint</a>
+        <a class="footer__link" href="platform/runtime-verification.html">Runtime Verification</a>
+      </div>
+
+      <div>
+        <p class="footer__col-title">Services</p>
+        <a class="footer__link" href="services/verified-knowledge-systems.html">Verified Knowledge Systems</a>
+        <a class="footer__link" href="services/department-transformation.html">Department Transformation</a>
+        <a class="footer__link" href="services/enterprise-transformation.html">Enterprise Transformation</a>
+      </div>
+
+      <div>
+        <p class="footer__col-title">Industries</p>
+        <a class="footer__link" href="industries/ai-native-companies.html">AI-Native Companies</a>
+        <a class="footer__link" href="industries/enterprise-it.html">Enterprise IT</a>
+        <a class="footer__link" href="industries/regulated-industries.html">Regulated Industries</a>
+        <a class="footer__link" href="industries/healthcare.html">Healthcare</a>
+        <a class="footer__link" href="industries/b2b-saas.html">B2B SaaS</a>
+      </div>
+
+      <div>
+        <p class="footer__col-title">Company</p>
+        <a class="footer__link" href="about/index.html">About</a>
+        <a class="footer__link" href="about/mission.html">Mission</a>
+        <a class="footer__link" href="about/team.html">Core Team</a>
+        <a class="footer__link" href="about/how-we-work.html">How We Work</a>
+        <a class="footer__link" href="about/what-we-dont-do.html">What We Don’t Do</a>
+        <a class="footer__link" href="careers.html">Careers</a>
+      </div>
+
+      <div>
+        <p class="footer__col-title">Resources</p>
+        <a class="footer__link" href="resources/blog/index.html">Blog</a>
+        <a class="footer__link" href="resources/documentation/index.html">Documentation</a>
+        <a class="footer__link" href="resources/case-studies/index.html">Case Studies</a>
+        <a class="footer__link" href="resources/faq.html">FAQ</a>
+        <a class="footer__link" href="contact.html">Contact</a>
+      </div>
+    </div>
+
+    <div class="footer__bottom">
+      <span>© 2026 StartiQOS AI — All rights reserved.</span>
+      <span class="footer__legal">
+        <a href="legal/privacy.html">Privacy</a>
+        <a href="legal/terms.html">Terms</a>
+        <a href="legal/security.html">Security</a>
+      </span>
+    </div>
+  </div>
+</footer>
+
+<script type="module" src="js/main.js"></script>
+</body>
+</html>
